@@ -75,6 +75,47 @@ const getMETAR = () => {
     });
 };
 
+const refreshMETAR = (station_id) => {
+  const stationElement = document.querySelector("#metar_table");
+  const station = station_id;
+  console.log(`entered: ${station}`);
+  const alertPanelElement = document.querySelector("#alert_panel");
+
+  validateADDSStation(station)
+    .then((response) => response.json())
+    .then((json) => {
+      let icao = null;
+      let site = null;
+      try {
+        icao = json.response.data[0].Station[0].station_id[0];
+        site = json.response.data[0].Station[0].site[0];
+      } catch (err) {
+        alertPanelElement.classList.remove("w3-hide");
+        alertPanelElement.classList.add("w3-show");
+        stationElement.focus();
+        stationElement.select();
+        console.log("BAD CODE");
+      }
+
+      console.log(`RETURN VALUE FROM VALIDATE: ${icao}`);
+      if (station !== icao) {
+        console.log(`ICAO ${icao} not found`);
+        alertPanelElement.classList.remove("w3-hide");
+        alertPanelElement.classList.add("w3-show");
+      } else {
+        alertPanelElement.classList.remove("w3-show");
+        alertPanelElement.classList.add("w3-hide");
+
+        fetch(`${ADDS_METAR_URL}${station}`)
+          .then((response) => response.json())
+          .then((json) => {
+            // printValues(json)
+            updateWeatherOutput(json, site);
+          });
+      }
+    });
+};
+
 const updateWeatherOutput = async (json, site) => {
   // extract metar collection
   const metar = json.response.data[0].METAR[0];
@@ -246,30 +287,30 @@ const updateWeatherOutput = async (json, site) => {
     const row = metarTableElement.insertRow(1);
 
     var stationIdCell = row.insertCell(0);
-    stationIdCell.innerHTML = `${station_id}`;
+    stationIdCell.innerHTML = `<button onclick="refreshMETAR('${station_id}')">${station_id}</button>`;
 
     var latitudeCell = row.insertCell(1);
-    latitudeCell.innerHTML = `${latitude}`;
+    latitudeCell.innerHTML = `<span onclick="refreshMETAR('${station_id}')">${latitude}</span>`;
 
     var longitudeCell = row.insertCell(2);
-    longitudeCell.innerHTML = `${longitude}`;
+    longitudeCell.innerHTML = `<span onclick="refreshMETAR('${station_id}')">${longitude}</span>`;
 
     var rawMETARCell = row.insertCell(3);
-    rawMETARCell.innerHTML = `${raw_metar}`;
+    rawMETARCell.innerHTML = `<span onclick="refreshMETAR('${station_id}')">${raw_metar}</span>`;
   } else {
     const row = metarTableElement.insertRow(1);
 
     var stationIdCell = row.insertCell(0);
-    stationIdCell.innerHTML = `${station_id}`;
+    stationIdCell.innerHTML = `<button onclick="refreshMETAR('${station_id}')">${station_id}</button>`;
 
     var latitudeCell = row.insertCell(1);
-    latitudeCell.innerHTML = `${latitude}`;
+    latitudeCell.innerHTML = `<span onclick="refreshMETAR('${station_id}')">${latitude}</span>`;
 
     var longitudeCell = row.insertCell(2);
-    longitudeCell.innerHTML = `${longitude}`;
+    longitudeCell.innerHTML = `<span onclick="refreshMETAR('${station_id}')">${longitude}</span>`;
 
     var rawMETARCell = row.insertCell(3);
-    rawMETARCell.innerHTML = `${raw_metar}`;
+    rawMETARCell.innerHTML = `<span onclick="refreshMETAR('${station_id}')">${raw_metar}</span>`;
   }
 };
 

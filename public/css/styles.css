@@ -23,6 +23,13 @@ footer {
   grid-auto-flow: column;
 }
 
+button {
+  color: rgb(255, 255, 255);
+  background-color: #9c27b08c;
+  border: none;
+  border-radius: 5px;
+}
+
 .custom-input {
   padding: 8px;
   display: block;
