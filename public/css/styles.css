@@ -30,6 +30,10 @@ button {
   border-radius: 5px;
 }
 
+button:hover {
+  background-color: #9c27b0;
+}
+
 .custom-input {
   padding: 8px;
   display: block;
